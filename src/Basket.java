@@ -1,17 +1,19 @@
 import java.io.*;
 
-//public class Basket implements Serializable {
-public class Basket {
+public class Basket implements Serializable {
     protected final int[] prices;
     protected final String[] products;
     private static int[] marcetProduct;
     private int sumProducts = 0;
 
-    //private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     Basket(int[] prices, String[] products) {
         this.prices = prices;
         this.products = products;
+        if (marcetProduct == null) {
+            marcetProduct = new int[products.length];
+        }
     }
 
     public static void setMarcetProduct(int productsLength) {
@@ -34,7 +36,7 @@ public class Basket {
         System.out.println("Итого: " + sumProducts + " руб");
     }
 
-    public void saveTxt(File textFile) throws IOException {//метод сохранения корзины в текстовый файл
+  /*  public void saveTxt(File textFile) throws IOException {//метод сохранения корзины в текстовый файл
 
         try (PrintWriter out = new PrintWriter(new FileWriter(textFile))) {
 
@@ -44,32 +46,32 @@ public class Basket {
             System.out.println("Файл или путь C:\\Users\\User\\IdeaProjects\\ShopIOFile/basket.txt отсутствует");
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
-    protected static void loadFromTextFile(File textFile) throws IOException {//метод восстановления объекта корзины из текстового файла
+   /* protected static void loadFromTextFile(File textFile) throws IOException {//метод восстановления объекта корзины из текстового файла
         try (BufferedReader in = new BufferedReader(new FileReader(textFile))) {
             String[] itemSplit = in.readLine().split(" ");
             for (int i = 0; i < itemSplit.length; i++) {
                 marcetProduct[i] = Integer.parseInt(itemSplit[i]);
             }
         }
-    }
+    }*/
 
     protected void saveBin(File file) throws IOException {//метод сохранения корзины в файл в бинарном формате.
         try (FileOutputStream fos = new FileOutputStream(file);// откроем выходной поток для записи в файл
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeObject(this);// запишем экземпляр корзины в файл
-            System.out.println("Файл Basket.bin создан.");
+            //System.out.println("Файл Basket.bin создан.");
         }
         //outBin.close(); Не требуется закрывать, ресурс т.к. он закрывается автоматически при использовании try .... catch
     }
 
     public static Basket loadFromBinFile(File file) throws IOException, ClassNotFoundException {//метод загрузки корзины из бинарного файла
         try (ObjectInputStream loadBinFile = new ObjectInputStream(new FileInputStream(file))) {
-            Basket baskets = (Basket) loadBinFile.readObject();
+            Basket pleyShop1 = (Basket) loadBinFile.readObject();
             loadBinFile.close();
             System.out.println("Файл Basket.bin прочитан методом десериализации");
-            return baskets;
+            return pleyShop1;
         }
     }
 }
