@@ -31,13 +31,10 @@ public class Basket implements Serializable {
     }
 
     //сериализация
-    protected static void saveBin(File file, Basket b01) throws IOException {//метод сохранения файла в бинарном формате.
-
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
-            oos.writeObject(b01);// запишем экземпляр корзины в файл
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+    public void saveBin(File file) throws IOException {
+        try (ObjectOutputStream saveBinFile = new ObjectOutputStream(new FileOutputStream(file))) {
+            saveBinFile.writeObject(this);
+            System.out.println("Файл bin создан. Сериализация");
         }
     }
 

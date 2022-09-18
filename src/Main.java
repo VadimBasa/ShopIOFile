@@ -39,7 +39,7 @@ class Main {
             String inputString = scanner.nextLine(); // Считываем номер операции
             if (inputString.equals("end")) {
                 b01.printCart();
-                b01.saveBin(basketBin, b01);
+                b01.saveBin(basketBin);
                 System.out.println("Данные корзины сохранены в basket.bin");
                 break;
             }
