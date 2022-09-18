@@ -10,15 +10,13 @@ class Main {
         Scanner scanner = new Scanner(System.in);
         String[] products = {"Хлеб", "Яблоки", "Молоко", "Яйца", "Колбаса"};
         int[] prices = {100, 200, 300, 150, 400};
-        Basket pleyShop = new Basket(prices, products);
-        Basket.setMarcetProduct(products.length);
+        Basket b01 = new Basket(prices, products);
         String binFileBasket = "basket.bin";
         File basketBin = new File("basket.bin");
         if (Files.exists(Path.of(String.valueOf(binFileBasket)))) {
             System.out.println("У Вас есть корзина с прошлого сеанса");
-            //leyShop.loadFromTextFile(basketText);
-            pleyShop.loadFromBinFile(basketBin);
-            pleyShop.printCart();
+            b01 = Basket.loadFromBinFile(basketBin);
+            b01.printCart();
         } else {
             try {
                 if (basketBin.createNewFile()) {
@@ -40,22 +38,17 @@ class Main {
             System.out.println("Выберите товар и количество или введите `end`");
             String inputString = scanner.nextLine(); // Считываем номер операции
             if (inputString.equals("end")) {
-                pleyShop.addToCart(productNumber, productCount);
-                pleyShop.printCart();
+                b01.printCart();
+                b01.saveBin(basketBin, b01);
+                System.out.println("Данные корзины сохранены в basket.bin");
                 break;
             }
             String[] inputProduct = inputString.split(" ");
             productNumber = Integer.parseInt(inputProduct[0]) - 1;
             productCount = Integer.parseInt(inputProduct[1]);
-            pleyShop.addToCart(productNumber, productCount);
-            //pleyShop.saveTxt(new File(textFileBasket));//
-            pleyShop.saveBin(new File(String.valueOf(binFileBasket)));//
-
+            b01.addToCart(productNumber, productCount);
+            b01.printCart();
         }
-        //pleyShop.printCart();
-        //pleyShop.loadFromBinFile(new File(textFileBasket));
-        //pleyShop.printCart();
-
     }
 
 }
