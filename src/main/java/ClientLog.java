@@ -9,14 +9,13 @@ import java.util.Arrays;
 public class ClientLog {
 
     protected final String[] products;
-    public static int[] marcetProduct;
+    public int[] marcetProduct;
     protected final int[] prices;
 
     ClientLog(int[] prices, String[] products) {
         this.prices = prices;
         this.products = products;
-
-        marcetProduct = new int[products.length];
+        this.marcetProduct = new int[products.length];
     }
 
     public void log(int productNum, int amount) {// метод добавления всех действий пользователя в историю
@@ -43,8 +42,8 @@ public class ClientLog {
             JSONObject basketJasonObj = (JSONObject) obj;
             JSONArray marcetProduct = (JSONArray) basketJasonObj.get("marcetProduct");
             for (Object baskObj : marcetProduct) {
-                for (int i = 0; i < ClientLog.marcetProduct.length; i++) {//this
-                    ClientLog.marcetProduct[i] = Integer.parseInt(String.valueOf(baskObj));
+                for (int i = 0; i < this.marcetProduct.length; i++) {//this
+                    this.marcetProduct[i] = Integer.parseInt(String.valueOf(baskObj));
                 }
             }
         } catch (IOException | NumberFormatException | ParseException e) {

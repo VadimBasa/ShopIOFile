@@ -1,15 +1,16 @@
 import java.io.*;
 
 public class Basket implements Serializable {
-    protected final int[] prices;
-    protected final String[] products;
-    public static int[] marcetProduct;
+    protected int[] prices;
+    protected String[] products;
+    public int[] marcetProduct;
 
     Basket(int[] prices, String[] products) {
         this.prices = prices;
         this.products = products;
-        marcetProduct = new int[products.length];
+        this.marcetProduct = new int[products.length];
     }
+    //Basket basket = new Basket(prices, products);
 
     public void addToCart(int productNum, int amount) {//метод добавления штук в корзину
         marcetProduct[productNum] += amount; // создаю массив корзины и добавляю в ячеку количество товара
@@ -40,7 +41,7 @@ public class Basket implements Serializable {
         }
     }
 
-    protected static int[] loadFromTextFile(File textFile) throws IOException {///метод восстановления объекта корзины из текстового файла
+    protected int[] loadFromTextFile(File textFile) throws IOException {///метод восстановления объекта корзины из текстового файла
         try (BufferedReader in = new BufferedReader(new FileReader(textFile))) {
             String[] itemSplit = in.readLine().split(" ");
             for (int i = 0; i < itemSplit.length; i++) {
