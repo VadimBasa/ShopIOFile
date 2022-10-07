@@ -1,16 +1,16 @@
-import com.opencsv.CSVWriter;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.google.gson.Gson;
 import java.io.*;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class ClientLog {
 
     protected final String[] products;
     public int[] marcetProduct;
     protected final int[] prices;
+    protected List<String[]> history = new ArrayList<>();
+
 
     ClientLog(int[] prices, String[] products) {
         this.prices = prices;
@@ -19,46 +19,34 @@ public class ClientLog {
     }
 
     public void log(int productNum, int amount) {// метод добавления всех действий пользователя в историю
-        marcetProduct[productNum] += amount;
+        history.add(new String[]{String.valueOf(productNum), String.valueOf(amount)});
     }
 
-    public void saveJson() throws IOException {
-        JSONObject basketJson = new JSONObject();
-        JSONArray basketJsonArr = new JSONArray();
-        for (int k : marcetProduct) {
-            basketJsonArr.add(k);
-        }
-        basketJson.put("marcetProduct", basketJsonArr);
-        try (FileWriter basketJsonFile = new FileWriter("basket.json")) {
-            basketJsonFile.write(basketJson.toJSONString());
-            basketJsonFile.flush();
+    public void saveJson(File jsonFile) throws IOException {
+        try (PrintWriter out = new PrintWriter(new FileWriter(jsonFile))) {
+            Gson gson = new Gson();
+            String json = gson.toJson(this);
+            out.println(json);
         }
     }
 
-    public void loadJson() throws IOException, ParseException {
-        JSONParser parser = new JSONParser();
-        try {
-            Object obj = parser.parse(new FileReader("basket.json"));
-            JSONObject basketJasonObj = (JSONObject) obj;
-            JSONArray marcetProduct = (JSONArray) basketJasonObj.get("marcetProduct");
-            for (Object baskObj : marcetProduct) {
-                for (int i = 0; i < this.marcetProduct.length; i++) {//this
-                    this.marcetProduct[i] = Integer.parseInt(String.valueOf(baskObj));
+    public static Basket loadJson(File jsonFile) throws IOException {
+        try (Scanner scanner = new Scanner(jsonFile)) {
+            String json = scanner.nextLine();
+            Gson gson = new Gson();
+            return gson.fromJson(json, Basket.class);
+        }
+    }
+
+    public void exportAsCSV(File csvFile) throws IOException { //метод сохранения журнала действий в файл log.csv
+
+            try (FileWriter writer = new FileWriter(csvFile, false)) {
+                   writer.write("productNum, amount\n");
+                for (String[] line : history) {
+                    writer.write(line[0] + "," + line[1] + "\n");
+                }
                 }
             }
-        } catch (IOException | NumberFormatException | ParseException e) {
-            throw new RuntimeException(e);
         }
-    }
 
-    public void exportAsCSV(File txtFile) { //метод сохранения журнала действий в файл log.csv
-
-        try (CSVWriter writer = new CSVWriter(new FileWriter(txtFile, true))) {
-            String[] saveStringLine = Arrays.toString(marcetProduct).split(", ");
-            writer.writeNext(saveStringLine);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}
 

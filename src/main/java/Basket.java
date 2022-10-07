@@ -1,19 +1,36 @@
 import java.io.*;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class Basket implements Serializable {
     protected int[] prices;
     protected String[] products;
-    public int[] marcetProduct;
+    protected int[] marcetProduct;
+    //private int sumProducts = 0;
+
+    private static final long serialVersionUID = 1L;
+
+    //public int[] getMarcetProduct() {
+    //    return marcetProduct;
+    //}
+    //public int[] setMarcetProduct(int[] marcetProduct){
+    //    this.marcetProduct = marcetProduct;
+    //}
 
     Basket(int[] prices, String[] products) {
         this.prices = prices;
         this.products = products;
         this.marcetProduct = new int[products.length];
     }
-    //Basket basket = new Basket(prices, products);
+
+    private Basket(int[] prices, String[] products, int[] marcetProduct) {
+        this.prices = prices;
+        this.products = products;
+        this.marcetProduct = marcetProduct;
+    }
 
     public void addToCart(int productNum, int amount) {//метод добавления штук в корзину
-        marcetProduct[productNum] += amount; // создаю массив корзины и добавляю в ячеку количество товара
+        this.marcetProduct[productNum] += amount; // создаю массив корзины и добавляю в ячеку количество товара
     }
 
     public void printCart() {// метод вывода корзины на экран
@@ -33,21 +50,51 @@ public class Basket implements Serializable {
 
         try (PrintWriter out = new PrintWriter(new FileWriter(textFile))) {
 
-            for (int e : marcetProduct)
+            for (String e : products) {
                 out.print(e + " ");
-        } catch (IOException e) {
-            System.out.println("Файл или путь basket.txt отсутствует");
-            throw new RuntimeException(e);
+            }
+            out.println();
+            for (int e : prices) {
+                out.print(e + " ");
+            }
+            out.println();
+            for (int e : marcetProduct) {
+                out.print(e + " ");
+            }
+            out.println();
         }
     }
 
-    protected int[] loadFromTextFile(File textFile) throws IOException {///метод восстановления объекта корзины из текстового файла
-        try (BufferedReader in = new BufferedReader(new FileReader(textFile))) {
-            String[] itemSplit = in.readLine().split(" ");
-            for (int i = 0; i < itemSplit.length; i++) {
-                marcetProduct[i] = Integer.parseInt(itemSplit[i]);
-            }
-            return marcetProduct;
+    public static Basket loadFromTextFile(File textFile) throws IOException {///метод восстановления объекта корзины из текстового файла
+
+        try (Scanner scanner = new Scanner(new FileInputStream(textFile))) {
+            String[] products = scanner.nextLine().trim().split(" ");
+            int[] prices = Arrays.stream(scanner.nextLine().trim().split(" "))
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+            int[] marcetProduct = Arrays.stream(scanner.nextLine().trim().split(" "))
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+            Basket b01 = new Basket(prices, products, marcetProduct);
+            return b01;
         }
     }
+
+    public void saveBin(File binFile) throws IOException {//метод сохранения корзины в bin файл
+
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(binFile))) {
+
+            out.writeObject(this);
+        }
+    }
+
+    public static Basket loadFromBinFile(File binFile) throws IOException, ClassNotFoundException {///метод восстановления объекта корзины из bin файла
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(binFile))) {
+
+            return (Basket) in.readObject();
+
+        }
+    }
+
 }
